@@ -727,8 +727,8 @@
                 <div class="dropdown-menu" id="dropdown-menu">
                     <a href="#" id="about-link">О нас</a>
                     <a href="#" id="models-link">Модели🦋</a>
-                    <a id="orders-link" href="#">Заказы</a>
-                    <a href="#guarantees">Гарантии</a>
+                    <a id="orders-link" href="#">Заказы</a> guarantees
+                    <a id="guarantees-link" href="#">Гарантии</a>
                 </div>
             </div>
             <div class="right-section">
@@ -822,6 +822,10 @@
                 const aboutLink = document.getElementById('about-link');
                 if (aboutLink) {
                     aboutLink.href = `https://nosimprada.github.io/about/?tg_id=${tgId}`;
+                }
+                const guaranteesLink = document.getElementById('guarantees-link');
+                if (aboutLink) {
+                    guaranteesLink.href = `https://nosimprada.github.io/guarantees/?tg_id=${tgId}`;
                 }
                 
                 const ordersButton = document.getElementById('my-orders-button');
