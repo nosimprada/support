@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Butterfly WebApp</title>
+
+    <!-- Подключение Swiper.js через CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://i.imgur.com/iH68xzN.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            background-position: center;
+            color: white;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 5px;
+            text-align: center;
+        }
+
+        .fixed-header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9em;
+        }
+
+        .fixed-header .left-section {
+            text-align: left;
+        }
+
+        .fixed-header .right-section {
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .fixed-header .center-section {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .fixed-header .subheader, .fixed-header .city-info, .fixed-header .balance-info {
+            color: #ccc;
+            margin: 0;
+            padding-right: 15px;
+        }
+
+        .fixed-header img {
+            max-height: 40px;
+        }
+
+        .recharge-button {
+            margin-bottom: 5px;
+            padding: 5px 10px;
+            border: 1px solid #ff6666;
+            background-color: #ff6666;
+            cursor: pointer;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .recharge-button:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        .center-section {
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .menu-button {
+            font-size: 0.8em;
+            cursor: pointer;
+            padding: 2px 10px;
+            margin-top: 5px;
+            color: white;
+            background-color: transparent;
+            border: none;
+            text-align: center;
+        }
+        
+        .menu-button:hover {
+            color: #ff6666;
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+            z-index: 1000;
+            width: 200px;
+            text-align: center;
+        }
+        
+        .dropdown-menu a {
+            color: white;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .dropdown-menu a:hover {
+            background-color: #575757;
+        }
+        
+        .dropdown-menu a:last-child {
+            border-bottom: none;
+        }
+        
+        .swiper-container {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin: 0 auto;
+            border: 2px solid black;
+            border-radius: 15px;
+            background-image: url('https://i.imgur.com/iH68xzN.png');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            position: relative;
+            padding-bottom: 30px;
+        }
+
+        .swiper-slide img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .swiper-pagination {
+            position: absolute !important;
+            bottom: 10px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            display: flex !important;
+            justify-content: center !important;
+        }
+
+        .swiper-pagination-bullet {
+            background-color: gray;
+            margin: 0 5px;
+            opacity: 0.5;
+        }
+
+        .swiper-pagination-bullet-active {
+            background-color: blue;
+            opacity: 1;
+        }
+
+        .model-info {
+            margin-top: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .services {
+            margin: 10px 0 5px;
+            padding: 10px;
+            border: 1px solid black;
+            border-radius: 10px;
+            display: inline-block;
+            width: 90%;
+            max-width: 300px;
+            background-image: url('https://i.imgur.com/WfHVlZv.png');
+            background-size: cover;
+            background-position: center;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .service-item {
+            padding: 8px;
+            margin: 3px 0;
+            border: 1px solid #000;
+            border-radius: 8px;
+            background-image: url('https://i.imgur.com/Ab6tx3G.png');
+            background-size: cover;
+            background-position: center;
+            font-size: 0.9em;
+            color: white;
+        }
+
+        .buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 5px;
+            flex-wrap: wrap;
+        }
+
+        .button {
+            padding: 8px 15px;
+            margin: 5px;
+            border: 2px solid #ff6666;
+            background-color: #ff6666;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 0.9em;
+            width: 45%;
+            color: white;
+        }
+
+        .button:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        .model-block {
+            margin-bottom: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-image: url('https://i.imgur.com/sz1YeQx.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            max-height: 80vh; /* Ограничиваем высоту окна */
+            overflow-y: auto; /* Включаем вертикальный скролл */
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            font-size: 1.2em;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .modal-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .content-container {
+            padding: 15px;
+            border: 1px solid black;
+            border-radius: 10px;
+            background-image: url('https://i.imgur.com/Ab6tx3G.png');
+            background-size: cover;
+            background-position: center;
+            width: 48%;
+            box-sizing: border-box;
+            color: white;
+        }
+
+        .content-container-large {
+            width: 100%;
+            margin-bottom: 10px;
+            background-image: url('https://i.imgur.com/Ab6tx3G.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            border-radius: 15px;
+        }
+
+        .input-field {
+            padding: 10px;
+            border-radius: 15px;
+            border: 1px solid #000;
+            width: 50%;
+            margin: 10px auto;
+            display: block;
+            text-align: center;
+            font-size: 1.1em;
+            background-color: #fff;
+            color: #000;
+        }
+
+        .button-container {
+            margin-top: 10px;
+        }
+
+        .form-button {
+            padding: 8px 15px;
+            background-color: #ff6666;
+            border: 2px solid #ff6666;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 1em;
+            color: white;
+        }
+
+        .form-button:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        .swiper-container .swiper-pagination {
+            z-index: 0;
+        }
+
+        /* Стиль для нового модального окна */
+        .modal-recharge {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-recharge-content {
+            background-image: url('https://i.imgur.com/b5B5udC.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 350px;
+            width: 80%;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-recharge-content p {
+            margin-bottom: 20px;
+        }
+
+        .error-message {
+            color: white;
+            display: none;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        /* Стиль для окна оплаты */
+        .modal-payment {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-payment-content {
+            background-image: url('https://i.imgur.com/b5B5udC.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 350px;
+            width: 80%;
+            text-align: center;
+            position: relative;
+        }
+
+        .payment-header {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .payment-amount {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .payment-info {
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .copy-button {
+            padding: 5px 10px;
+            border: 1px solid #ff6666;
+            background-color: #ff6666;
+            cursor: pointer;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.9em;
+        }
+
+        .copy-button:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        .modal-notification {
+            display: none;
+            position: fixed;
+            z-index: 3;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-notification-content {
+            background-image: url('https://i.imgur.com/b5B5udC.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 350px;
+            width: 80%;
+            text-align: center;
+            position: relative;
+        }
+
+        .notification-image {
+            width: 50px;
+            margin-bottom: 15px;
+        }
+
+        .notification-text {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        .modal-close-btn {
+            padding: 10px 15px;
+            background-color: #ff6666;
+            border: 2px solid #ff6666;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 1em;
+            color: white;
+        }
+        
+        .service-option {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ff6666;
+            cursor: pointer;
+            border-radius: 10px;
+            background-color: #ff6666;
+            color: white;
+        }
+        
+        .service-option.selected {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+        
+        #total-amount {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+        
+        .form-button {
+            padding: 10px 20px;
+            background-color: #ff6666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 1em;
+        }
+        
+        .form-button:hover {
+            background-color: #ff4d4d;
+        }
+
+        /* Дополнительные услуги */
+        .modal-add-services {
+            display: none;
+            position: fixed;
+            z-index: 2;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-add-services-content {
+            background-image: url('https://i.imgur.com/sz1YeQx.png');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .additional-service {
+            margin: 10px 0;
+            padding: 10px;
+            border: 2px solid #ff6666;
+            cursor: pointer;
+            border-radius: 10px;
+            background-color: #ff6666;
+            color: white;
+        }
+
+        .additional-service.selected {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+        #final-amount {
+            font-size: 1.2em;
+            margin-top: 20px;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .form-button-pay-balance {
+            padding: 10px 20px;
+            background-color: #ff6666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 1em;
+            display: block;
+            margin: 0 auto; /* Центрирование кнопки */
+        }
+        
+        .form-button-pay-balance:hover {
+            background-color: #ff4d4d;
+        }
+        
+        .button-container {
+            display: flex;
+            justify-content: space-between; /* Разместить кнопки по разным сторонам */
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        /* Стиль кнопки "Мои заказы" */
+        .my-orders-button {
+            width: 150px;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #ff6666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 1em;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .my-orders-button:hover {
+            background-color: #ff4d4d;
+        }
+        
+        /* Стиль кнопки "Закрыть" */
+        .close-modal-button {
+            width: 150px;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #666666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 1em;
+            display: block;
+            margin: 0 auto;
+        }
+        
+        .close-modal-button:hover {
+            background-color: #4d4d4d;
+        }
+        
+        /* Центрирование кнопок внутри контейнера */
+        .modal .button-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .button-container-details {
+            display: flex;
+            justify-content: space-between; /* Размещаем кнопки по разным сторонам */
+            margin-top: 10px;
+            gap: 10px; /* Расстояние между кнопками */
+        }
+        
+        .form-button {
+            padding: 8px 15px;
+            background-color: #ff6666;
+            border: 2px solid #ff6666;
+            cursor: pointer;
+            border-radius: 10px;
+            font-size: 1em;
+            color: white;
+            flex: 1; /* Кнопки занимают равное пространство */
+        }
+        
+        .form-button:hover {
+            background-color: #ff4d4d;
+            border-color: #ff4d4d;
+        }
+
+
+
+
+
+
+
+
+      /* Дополнительные стили для раздела "О нас" */
+        .about-container {
+            text-align: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            margin: 20px;
+            border-radius: 15px;
+        }
+
+        .about-title {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .about-text {
+            font-size: 1.2em;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .about-button {
+            padding: 10px 20px;
+            background-color: #ff6666;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            font-size: 1em;
+            display: inline-block;
+        }
+
+        .about-button:hover {
+            background-color: #ff4d4d;
+        }
+      
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="fixed-header">
+            <div class="left-section">
+                <div id="city-name">Город: Москва</div>
+                <div id="model-count">Модели: 10</div>
+            </div>
+            <div class="center-section">
+                <img src="https://i.imgur.com/QP0tpU2.png" alt="Butterfly Logo">
+                <div class="menu-button" onclick="toggleMenu()">♔НАВИГАЦИЯ♔</div> <!-- Кнопка меню -->
+                <div class="dropdown-menu" id="dropdown-menu">
+                    <a href="#" id="about-link">О нас</a>
+                    <a href="#" id="models-link">Модели🦋</a>
+                    <a id="orders-link" href="#">Заказы</a>
+                    <a href="#guarantees">Гарантии</a>
+                </div>
+            </div>
+            <div class="right-section">
+                <button class="recharge-button" onclick="openRechargeModal()">Пополнить</button> <!-- Открытие модального окна для пополнения -->
+                <div id="balance">Баланс: 1000₽</div>
+            </div>
+        </div>
+
+        <div id="models-container">
+            <!-- Здесь будут добавляться модели -->
+        </div>
+
+      <!-- Контейнер с информацией о нас -->
+        <div class="about-container">
+            <div class="about-title">Информация о нас</div>
+            <div class="about-text">
+                <!-- Ваш длинный текст будет здесь -->
+                Техническая поддержка эскорт-агентства всегда готова помочь в случае возникновения любых технических проблем. Обращайтесь в неё, если у вас возникли трудности с доступом к платформе, проблемы с оплатой услуг, вопросы по функциональности бота.
+                <br><br>
+                Чтобы получить качественную помощь, соблюдайте следующие правила:<br>
+                1. При описании проблемы будьте максимально информативны. Укажите детали, ошибки, которые привели к проблеме.<br>
+                2. Соблюдайте уважительное и корректное общение с сотрудниками поддержки.<br>
+                3. Если проблема касается конфиденциальной информации, не раскрывайте личные данные в открытой переписке.<br><br>
+                
+                Сроки ответа технической поддержки колеблются:<br>
+                - Первый уровень (10 минут): Быстрые ответы на общие вопросы и проблемы, которые могут быть решены быстро.<br>
+                - Второй уровень (30 минут - 1 час): Сложные проблемы, требующие более глубокого анализа и решения.<br><br>
+                
+                Обращение в техническую поддержку позволит вам оперативно решить возникшие технические сложности и продолжить пользоваться услугами эскорт-агентства без перебоев.
+                            </div>
+            <a href="https://t.me/NightbutterflySupport" class="about-button">Модели</a> <!-- Замените ссылку на актуальную -->
+        </div>
+        
+        <!-- Модальное окно для пополнения баланса -->
+        <div class="modal-recharge" id="recharge-modal">
+            <div class="modal-recharge-content">
+                <span class="close-btn" onclick="closeRechargeModal()">&times;</span>
+                <p>Введите сумму для пополнения...</p>
+                <input type="number" id="recharge-amount" class="input-field" min="2000" max="30000" placeholder="2000">
+                <div id="error-message" class="error-message">СУММА ДОЛЖНА БЫТЬ МЕЖДУ 2000 И 30000 РУБЛЕЙ.</div>
+                <div class="button-container">
+                    <button class="form-button-pay-balance" onclick="submitRecharge()">Далее</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Модальное окно для подтверждения платежа -->
+        <div class="modal-payment" id="payment-modal">
+            <div class="modal-payment-content">
+                <span class="close-btn" onclick="closePaymentModal()">&times;</span>
+                <p class="payment-header" style="font-size: 1em;">*ОПЛАТА БАНКОВСКОЙ КАРТОЙ*</p>
+                <p class="payment-amount" id="payment-amount">Сумма: 0₽</p>
+                <div class="payment-info" style="padding: 10px; border: 1px solid white; border-radius: 10px; display: inline-block;">
+                    <span>*Оплатите точную сумму по данным реквизитам:</span><br>
+                    <span id="payment-credentials">2200280402112652</span>
+                    <button class="copy-button" style="margin-left: 5px; padding: 5px 10px; border: 1px solid white; border-radius: 10px; background: none; cursor: pointer;" onclick="copyToClipboard()">📋</button>
+                </div>
+                <p>❗️Для оплаты у Вас есть 20 минут⏳</p>
+                <div class="button-container">
+                    <button class="form-button-pay-balance" onclick="handlePaymentCheck()">Оплачено</button>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- Модальное окно для уведомлений -->
+        <div class="modal-notification" id="notification-modal">
+            <div class="modal-notification-content">
+                <img id="notification-image" class="notification-image" src="" alt="Notification Image">
+                <p id="notification-text" class="notification-text"></p>
+                <button id="notification-close-btn" class="modal-close-btn" onclick="closeNotification()">Перейти</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const tgId = getQueryParam('tg_id');
+            if (tgId) {
+                const ordersLink = document.getElementById('orders-link');
+                if (ordersLink) {
+                    ordersLink.href = `https://nosimprada.github.io/my_orders/?tg_id=${tgId}`;
+                }
+                const modelsLink = document.getElementById('models-link');
+                if (modelsLink) {
+                    modelsLink.href = `https://nosimprada.github.io/testweb/?tg_id=${tgId}`;
+                }
+
+                const aboutLink = document.getElementById('about-link');
+                if (aboutLink) {
+                    aboutLink.href = `https://nosimprada.github.io/about/?tg_id=${tgId}`;
+                }
+                
+                const ordersButton = document.getElementById('my-orders-button');
+                if (ordersButton) {
+                    ordersButton.onclick = function() {
+                        window.location.href = `https://nosimprada.github.io/my_orders/?tg_id=${tgId}`;
+                    };
+                }
+            }
+        });
+        
+        let selectedOption = null;
+        let basePrice = 0;
+        let additionalServices = [];
+        let totalAmount = 0;
+        
+        function openOrderModal(button) {
+            const modelName = button.getAttribute('data-name');
+            const modelPhoto = button.getAttribute('data-photo');
+            const hour = button.getAttribute('data-hour');
+            const twohours = button.getAttribute('data-twohours');
+            const night = button.getAttribute('data-night');
+            const video_call = button.getAttribute('data-videocall');
+            const addservices = button.getAttribute('data-addservices');
+        
+            // Сохраняем имя и фото модели в переменные для последующего использования
+            selectedModelName = modelName;
+            selectedModelPhoto = modelPhoto;
+        
+            document.getElementById('hour-option').textContent = `Час: ${hour}₽`;
+            document.getElementById('twohours-option').textContent = `Два часа: ${twohours}₽`;
+            document.getElementById('night-option').textContent = `Ночь: ${night}₽`;
+            document.getElementById('video_call-option').textContent = `Видеозвонок: ${video_call}₽`;
+        
+            if (addservices) {
+                additionalServices = addservices.split(',').map(service => {
+                    const [name, price] = service.split(':');
+                    return { name: name.trim(), price: parseInt(price.trim(), 10) };
+                });
+            } else {
+                additionalServices = [];
+            }
+        
+            document.getElementById('order-modal').style.display = 'flex';
+        }
+        
+        function closeOrderModal() {
+            document.getElementById('order-modal').style.display = 'none';
+        }
+        
+        function selectOption(option) {
+            selectedOption = option;
+        
+            // Удаляем выделение со всех опций
+            document.getElementById('hour-option').classList.remove('selected');
+            document.getElementById('twohours-option').classList.remove('selected');
+            document.getElementById('night-option').classList.remove('selected');
+            document.getElementById('video_call-option').classList.remove('selected');
+        
+            // Выделяем выбранную опцию
+            document.getElementById(`${option}-option`).classList.add('selected');
+        
+            // Обновляем итоговую сумму в зависимости от выбора
+            switch (option) {
+                case 'hour':
+                    basePrice = parseInt(document.getElementById('hour-option').textContent.split(' ')[1].replace('₽', ''));
+                    break;
+                case 'twohours':
+                    basePrice = parseInt(document.getElementById('twohours-option').textContent.split(' ')[2].replace('₽', ''));
+                    break;
+                case 'night':
+                    basePrice = parseInt(document.getElementById('night-option').textContent.split(' ')[1].replace('₽', ''));
+                    break;
+                case 'video_call':
+                    basePrice = parseInt(document.getElementById('video_call-option').textContent.split(' ')[1].replace('₽', ''));
+                    break;
+            }
+        
+            totalAmount = basePrice;
+            document.getElementById('total-amount').textContent = `Итого: ${totalAmount}₽`;
+        
+            // Активируем кнопку "Далее", если выбрана хотя бы одна услуга
+            document.getElementById('proceed-button').disabled = false;
+        }
+        
+        function proceedToAddServices() {
+            if (!selectedOption) {
+                alert('Пожалуйста, выберите услугу перед тем, как продолжить.');
+                return;
+            }
+            // Остальная логика для обработки перехода к дополнительным услугам
+        }
+        
+        function proceedToAddServices() {
+            if (!selectedOption) {
+                alert('Пожалуйста, выберите услугу перед тем, как продолжить.');
+                return;
+            }
+        
+            // Если дополнительные услуги отсутствуют или выбран видеозвонок
+            if (additionalServices.length === 0 || selectedOption === 'video_call') {
+                confirmOrder();  // Сразу завершаем заказ, видеозвонок будет записан как сервис
+            } else {
+                closeOrderModal();
+        
+                const addServicesContainer = document.getElementById('add-services-options');
+                addServicesContainer.innerHTML = '';
+        
+                additionalServices.forEach((service, index) => {
+                    const serviceElement = document.createElement('div');
+                    serviceElement.classList.add('additional-service');
+                    serviceElement.textContent = `${service.name}: ${service.price}₽`;
+                    serviceElement.onclick = () => toggleServiceSelection(serviceElement, service.price);
+                    addServicesContainer.appendChild(serviceElement);
+                });
+        
+                document.getElementById('final-amount').textContent = `Итого: ${totalAmount}₽`;
+                document.getElementById('add-services-modal').style.display = 'flex';
+            }
+        }
+        
+        function toggleServiceSelection(serviceElement, price) {
+            if (serviceElement.classList.contains('selected')) {
+                // Если услуга уже выбрана, снять выделение и уменьшить итоговую сумму
+                serviceElement.classList.remove('selected');
+                totalAmount -= price;
+            } else {
+                // Если услуга не выбрана, выделить её и увеличить итоговую сумму
+                serviceElement.classList.add('selected');
+                totalAmount += price;
+            }
+            document.getElementById('final-amount').textContent = `Итого: ${totalAmount}₽`;
+        }
+        
+        function confirmOrder() {
+            alert(`Вы выбрали услугу с общей суммой: ${totalAmount}₽`);
+            closeAddServicesModal();
+        }
+        
+        function cancelOrder() {
+            closeAddServicesModal();
+        }
+        
+        function closeAddServicesModal() {
+            document.getElementById('add-services-modal').style.display = 'none';
+        }
+
+        let workerId = null;
+        let profitId = null; // Переменная для хранения profit_id
+
+        // Функция для запроса данных с API
+        async function fetchData(userId) {
+            const response = await fetch(`http://localhost:8000/api/v1/butterfly/${userId}`);
+            const data = await response.json();
+            workerId = data.worker_id;  // Сохраняем worker_id для дальнейшего использования
+            console.log("Worker ID:", workerId);
+            return data;
+        }
+
+        function toggleMenu() {
+            const menu = document.getElementById('dropdown-menu');
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+            }
+        }
+        
+        // Закрытие меню при клике вне его области
+        window.onclick = function(event) {
+            if (!event.target.matches('.menu-button')) {
+                const dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    let openDropdown = dropdowns[i];
+                    if (openDropdown.style.display === 'block') {
+                        openDropdown.style.display = 'none';
+                    }
+                }
+            }
+        }
+        // Функция для добавления стандартных моделей
+        function addStandardModels() {
+            const models = [
+                {
+                    name: "Анна, 25",
+                    photos: ["https://i.imgur.com/2t3B9lt.jpeg", "https://i.imgur.com/ww3eU0N.jpeg", "https://i.imgur.com/beqLFaO.jpeg"],
+                    services: ["Массаж", "Спа-процедуры", "Терапия"],
+                    description: "Описание Анны",
+                    hour: "2500₽",
+                    twohours: "7500₽",
+                    night: "12500₽",
+                    addservices: "Доп.сервисы1: 1000, Доп.Сервисы2: 1500",
+                    video_call: "500"
+                },
+                {
+                    name: "Елена, 28",
+                    photos: ["https://i.imgur.com/abc123.jpeg", "https://i.imgur.com/def456.jpeg", "https://i.imgur.com/ghi789.jpeg"],
+                    services: ["Фитнес", "Йога"],
+                    description: "Описание Елены",
+                    hour: "2500₽",
+                    twohours: "7500₽",
+                    night: "12500₽",
+                    addservices: "",
+                    video_call: "500"
+                },
+                {
+                    name: "Виктория, 30",
+                    photos: ["https://i.imgur.com/jkl123.jpeg", "https://i.imgur.com/mno456.jpeg", "https://i.imgur.com/pqr789.jpeg"],
+                    services: ["Фотосессии", "Макияж"],
+                    description: "Описание Виктории",
+                    hour: "2500₽",
+                    twohours: "7500₽",
+                    night: "12500₽",
+                    addservices: "Доп.сервисы1: 2500",
+                    video_call: "500"
+                }
+            ];
+
+            models.forEach(model => {
+                addModel(model);
+            });
+        }
+
+        // Функция для добавления модели в DOM
+        function addModel(model) {
+            const modelBlock = document.createElement('div');
+            modelBlock.classList.add('model-block');
+        
+            let photosHtml = '';
+            model.photos.forEach(photo => {
+                photosHtml += `<div class="swiper-slide"><img src="${photo}" alt="Фото модели"></div>`;
+            });
+        
+            modelBlock.innerHTML = `
+                <div class="swiper-container">
+                    <div class="swiper-wrapper">
+                        ${photosHtml}
+                    </div>
+                    <div class="swiper-pagination"></div>
+                </div>
+                <div class="model-info">${model.name}</div>
+                <div class="services">
+                    ${model.services.map(service => `<div class="service-item">${service}</div>`).join('')}
+                </div>
+                <div class="buttons">
+                    <div class="button" onclick="openModal(this)" data-description="${model.description}" data-hour="${model.hour}" data-twohours="${model.twohours}" data-night="${model.night}" data-addservices="${model.addservices}" data-videocall="${model.video_call}" data-name="${model.name}" data-photo="${model.photos[0]}">Детали</div>
+                    <div class="button" onclick="openOrderModal(this)" data-hour="${model.hour}" data-twohours="${model.twohours}" data-night="${model.night}" data-addservices="${model.addservices}" data-videocall="${model.video_call}" data-name="${model.name}" data-photo="${model.photos[0]}">Оформить</div>
+                </div>
+            `;
+        
+            document.getElementById('models-container').appendChild(modelBlock);
+        
+            new Swiper(modelBlock.querySelector('.swiper-container'), {
+                loop: true,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+            });
+        }
+
+        // Запуск логики в зависимости от наличия tg_id
+        window.onload = async function() {
+            const tgId = getQueryParam('tg_id');
+            if (tgId) {
+                const data = await fetchData(tgId);
+                // Устанавливаем город и баланс
+                document.getElementById('city-name').textContent = `Город: ${data.city}`;
+                document.getElementById('balance').textContent = `Баланс: ${data.balance}₽`;
+
+            }
+        };
+
+        function closeModal() {
+            document.getElementById('details-modal').style.display = 'none';
+        }
+        
+        function openModal(button) {
+            const description = button.getAttribute('data-description');
+            const hour = button.getAttribute('data-hour');
+            const twohours = button.getAttribute('data-twohours');
+            const night = button.getAttribute('data-night');
+            const addservices = button.getAttribute('data-addservices');
+            const video_call = button.getAttribute('data-videocall') || 'Нет данных';
+            const modelName = button.getAttribute('data-name'); // Получаем имя модели
+            const modelPhoto = button.getAttribute('data-photo'); // Получаем фото модели
+        
+            document.getElementById('model-description-large').textContent = description;
+            document.getElementById('model-detail-1').textContent = '🌇Час: ' + hour;
+            document.getElementById('model-detail-2').textContent = '🏙Два часа: ' + twohours;
+            document.getElementById('model-detail-3').textContent = '🌃Ночь: ' + night;
+        
+            if (addservices) {
+                document.getElementById('model-detail-4').innerHTML = addservices.replace(/,/g, '₽<br>') + '₽';
+            } else {
+                document.getElementById('model-detail-4').textContent = 'Доп. сервисы отсутствуют';
+            }
+        
+            document.getElementById('model-detail-5').textContent = `Видеозвонок: ${video_call}₽`;
+        
+            const orderButton = document.getElementById('details-order-button');
+            orderButton.setAttribute('data-hour', hour);
+            orderButton.setAttribute('data-twohours', twohours);
+            orderButton.setAttribute('data-night', night);
+            orderButton.setAttribute('data-addservices', addservices);
+            orderButton.setAttribute('data-videocall', video_call);
+            orderButton.setAttribute('data-name', modelName); // Передаем имя модели в кнопку
+            orderButton.setAttribute('data-photo', modelPhoto); // Передаем фото модели в кнопку
+        
+            orderButton.onclick = function() {
+                openOrderModal(orderButton);
+            };
+        
+            document.getElementById('details-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('details-modal').style.display = 'none';
+        }
+
+        function openRechargeModal() {
+            document.getElementById('recharge-modal').style.display = 'flex';
+        }
+
+        function closeRechargeModal() {
+            document.getElementById('recharge-modal').style.display = 'none';
+        }
+
+        function openPaymentModal(amount, credentials) {
+            document.getElementById('payment-amount').textContent = `Сумма: ${amount}₽`;
+            document.getElementById('payment-credentials').textContent = credentials;
+            document.getElementById('payment-modal').style.display = 'flex';
+        }
+
+        function closePaymentModal() {
+            document.getElementById('payment-modal').style.display = 'none';
+        }
+
+        async function submitRecharge() {
+            const amount = document.getElementById('recharge-amount').value;
+            const errorMessage = document.getElementById('error-message');
+            const tgId = getQueryParam('tg_id');
+
+            if (amount < 2000 || amount > 30000) {
+                errorMessage.style.display = 'block';
+            } else {
+                errorMessage.style.display = 'none';
+                const payload = {
+                    amount: parseInt(amount, 10),
+                    worker_id: workerId,
+                    mammoth_id: parseInt(tgId, 10)
+                };
+                console.log("Payload to send:", payload);
+                const response = await fetch(`http://localhost:8000/api/v1/butterfly/new_payment`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+                const data = await response.json();
+                if (response.ok) {
+                    profitId = data.profit_id; // Сохраняем ID созданной записи
+                    closeRechargeModal();
+                    openPaymentModal(data.amount, data.transfer_credentials);
+                } else {
+                    console.log("Error in API response:", data);
+                }
+            }
+        }
+
+        async function handlePaymentCheck() {
+            if (!profitId) return;
+
+            const response = await fetch(`http://localhost:8000/api/v1/butterfly/check_payment_status/${profitId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.is_paid) {
+                showNotificationModal(true);
+            } else {
+                showNotificationModal(false);
+            }
+        }
+
+        function showNotificationModal(isPaymentSuccessful) {
+            const notificationModal = document.getElementById('notification-modal');
+            const notificationText = document.getElementById('notification-text');
+            const notificationImage = document.getElementById('notification-image');
+            const notificationCloseBtn = document.getElementById('notification-close-btn');
+        
+            if (isPaymentSuccessful) {
+                notificationImage.src = "https://i.imgur.com/S2yNuNz.png";
+                notificationText.textContent = "Ваш платёж успешно получен и обработан.";
+                notificationCloseBtn.textContent = "Перейти";
+            } else {
+                notificationImage.src = "https://i.imgur.com/6KzuudD.png";
+                notificationText.textContent = "Как только платёж будет получен и обработан, мы отправим Вам уведомление.";
+                notificationCloseBtn.textContent = "Ок";
+            }
+        
+            // Привязываем к кнопке действие обновления страницы
+            notificationCloseBtn.onclick = function() {
+                location.reload();  // Обновляет текущую страницу
+            };
+        
+            notificationModal.style.display = 'flex';
+        }
+        
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        function copyToClipboard() {
+            const copyText = document.getElementById('payment-credentials').textContent;
+            navigator.clipboard.writeText(copyText).catch(err => {
+                console.error('Ошибка при копировании: ' + err);
+            });
+        }
+
+        function closeNotification() {
+            document.getElementById('notification-modal').style.display = 'none';
+        }
+
+        let selectedModelName = '';
+        let selectedModelPhoto = '';
+
+        async function confirmOrder() {
+            const tgId = getQueryParam('tg_id');  // Получение tg_id из URL
+            
+            const serviceName = selectedOption;
+            let addserviceName = '';
+        
+            // Получаем выбранные дополнительные услуги
+            const selectedServices = document.querySelectorAll('.additional-service.selected');
+            if (selectedServices.length > 0) {
+                addserviceName = Array.from(selectedServices).map(service => service.textContent.split(':')[0].trim()).join(', ');
+            }
+        
+            const payload = {
+                mammoth_id: parseInt(tgId, 10),
+                model_name: selectedModelName,  // Используем имя выбранной модели
+                photo_link: selectedModelPhoto,  // Используем ссылку на фото выбранной модели
+                service_name: serviceName,  // Включаем видеозвонок, если он выбран
+                addservice_name: addserviceName,
+                amount: totalAmount,
+                status: "new"
+            };
+        
+            try {
+                const response = await fetch('http://localhost:8000/api/v1/butterfly/create_order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
+                });
+        
+                if (response.ok) {
+                    closeOrderModal();  // Закрываем предыдущее окно (окно заказа)
+                    closeAddServicesModal();  // Закрываем окно дополнительных услуг, если оно открыто
+                    showOrderSuccessModal();  // Показываем всплывающее окно при успешном создании заказа
+                } else {
+                    const errorData = await response.json();
+                    console.error('Ошибка сервера:', errorData);  // Выводим полную ошибку в консоль
+                    alert('Произошла ошибка при создании заказа: ' + JSON.stringify(errorData));
+                }
+            } catch (error) {
+                alert('Произошла ошибка при отправке запроса: ' + error.message);
+            }
+        }
+       function closeOrderModal() {
+            const orderModal = document.getElementById('order-modal');
+            if (orderModal) {
+                orderModal.style.display = 'none';
+            }
+        }
+        
+        function closeAddServicesModal() {
+            const addServicesModal = document.getElementById('add-services-modal');
+            if (addServicesModal) {
+                addServicesModal.style.display = 'none';
+            }
+        }
+        
+        function showOrderSuccessModal() {
+            const successModal = document.getElementById('order-success-modal');
+            if (successModal) {
+                successModal.style.display = 'flex';
+            }
+        }
+        
+        function closeSuccessModal() {
+            const successModal = document.getElementById('order-success-modal');
+            if (successModal) {
+                successModal.style.display = 'none';
+            }
+            location.reload(); // Обновляем страницу после закрытия модального окна
+        }
+        
+        function openMyOrdersPage() {
+            window.location.href = 'https://your-website.com/my-orders';  // Замените на URL страницы "Мои заказы"
+        }
+        
+        function closeAddServicesModal() {
+            const addServicesModal = document.getElementById('add-services-modal');
+            if (addServicesModal) {
+                addServicesModal.style.display = 'none';
+            }
+        }
+        
+        function cancelOrder() {
+            closeAddServicesModal();  // Закрываем модальное окно
+        }
+    </script>
+
+</body>
+</html>
